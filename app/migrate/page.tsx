@@ -1,4 +1,4 @@
-import { MigrationRules } from '@/components/MIgrationRules';
+import { MigrationRules } from '@/components/MigrationRules';
 
 export default function MigratePage() {
   return (

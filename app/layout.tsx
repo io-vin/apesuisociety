@@ -1,3 +1,5 @@
+// app/layout.tsx
+import { Providers } from './providers';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
 import type { Metadata } from 'next';
@@ -14,9 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-ape-bg text-ape-text font-ethnocentric">
-        <Navbar />
-        {children}
+      <body className="bg-black text-white">
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

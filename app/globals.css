@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font setup */
 @font-face {
   font-family: 'Ethnocentric';
   src: url('/ethnocentric.otf') format('opentype');
@@ -10,104 +11,438 @@
   font-display: swap;
 }
 
+/* Reset and base styles */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body, html {
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #020202;
+  color: white;
+  font-family: 'Ethnocentric', sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+}
+
+/* Navbar styles */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 72px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #020202;
+  padding: 0 1rem;
+  z-index: 50;
+  will-change: transform;
+}
+
+.navbar-logo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+}
+
+.navbar-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-actions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.navbar-link {
+  position: relative;
+  margin: 0 10px;
+  font-family: 'Ethnocentric', sans-serif;
+  font-size: 0.875rem;
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Active link indicator with animation */
+.navbar-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 15%;
+  width: 70%;
+  height: 2px;
+  background-color: white;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; width: 0; left: 50%; }
+  to { opacity: 1; width: 70%; left: 15%; }
+}
+
+/* Connect wallet button */
+.connect-wallet-button {
+  padding: 0.5rem 1rem;
+  background-color: #1DCDFF;
+  color: black;
+  border: none;
+  border-radius: 20px;
+  font-family: 'Ethnocentric', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.connect-wallet-button:hover {
+  background-color: #00b5e6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(29, 205, 255, 0.3);
+}
+
+/* Migration container */
+.migration-container {
+  width: 100%;
+  height: calc(100vh - 72px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 72px; /* Account for navbar height */
+  background: radial-gradient(circle at center, rgba(29, 205, 255, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+/* Launch App button with animations */
+.open-app-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 2.5rem;
+  background-color: transparent;
+  border: 2px solid #1DCDFF;
+  border-radius: 50px;
+  font-family: 'Ethnocentric', sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1DCDFF;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1;
+}
+
+.open-app-button .btn-text {
+  position: relative;
+  z-index: 3;
+}
+
+.open-app-button .btn-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #1DCDFF, #00b5e6);
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.4s ease;
+  border-radius: 50px;
+}
+
+.open-app-button:hover {
+  color: #000;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(29, 205, 255, 0.5);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.open-app-button:hover .btn-glow {
+  opacity: 1;
+}
+
+.open-app-button:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Pulsing glow animation */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(29, 205, 255, 0.5), 0 0 20px rgba(29, 205, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(29, 205, 255, 0.8), 0 0 40px rgba(29, 205, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(29, 205, 255, 0.5), 0 0 20px rgba(29, 205, 255, 0.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+
+/* Page transition animations */
+.page-transition {
+  width: 100%;
   height: 100%;
 }
 
-@layer components {
-  .active-nav-link {
-    @apply relative;
-  }
-  
-  .active-nav-link::after {
-    content: '';
-    @apply absolute bottom-[-5px] left-[15%] w-[70%] h-[2px] bg-white;
-  }
-  
-  .filter-button {
-    @apply mt-2.5 ml-5 bg-transparent border-none text-white text-sm cursor-pointer relative flex justify-between items-center pl-5 pt-2 z-10 w-[200px] font-ethnocentric;
-  }
-  
-  .filter-button::before {
-    content: "";
-    @apply block absolute top-0.5 left-0 w-[200px] h-0.5 bg-white bg-opacity-40;
-  }
-  
-  .search-input {
-    @apply font-ethnocentric pt-2 pl-5 flex items-center relative max-w-full;
-  }
-  
-  .search-input input {
-    @apply text-xs py-1.5 px-2.5 w-[200px] pl-8 outline-none bg-ape-search text-white border-0 rounded-full transition-all duration-300;
-  }
-  
-  .search-input svg {
-    @apply absolute left-[30px] fill-white w-[13px] h-[13px];
+/* Prevent scrollbar jumps during transitions */
+html.transitioning {
+  overflow: hidden;
+}
+
+/* Main content area */
+main {
+  width: 100%;
+  min-height: calc(100vh - 72px);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Search input styling */
+.search-input {
+  font-family: 'Ethnocentric', sans-serif;
+  padding-top: 8px;
+  padding-left: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  max-width: 100%;
+}
+
+.search-input input {
+  font-size: 13px;
+  padding: 6px 10px;
+  width: 200px;
+  padding-left: 30px;
+  outline: none;
+  background: #6B7280;
+  color: white;
+  border: 0px solid #6B7280;
+  border-radius: 20px;
+  transition: 0.3s ease;
+}
+
+.search-input input:focus {
+  background: #4B5563;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.search-input svg {
+  position: absolute;
+  left: 30px;
+  fill: white;
+  width: 13px;
+  height: 13px;
+}
+
+/* Filter buttons styling */
+.filter-button {
+  margin-top: 10px;
+  margin-left: 20px;
+  font-family: 'Ethnocentric', sans-serif;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 20px;
+  padding-top: 8px;
+  z-index: 2;
+  width: 200px;
+  transition: color 0.3s ease;
+}
+
+.filter-button:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.filter-button::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 200px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* NFT Gallery styling */
+.image-gallery {
+  position: absolute;
+  top: 150px;
+  right: 0;
+  width: calc(100% - 300px);
+  height: calc(100% - 150px);
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.image-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.image-item {
+  position: relative;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.image-item:hover {
+  transform: translateY(-5px);
+}
+
+.thumbnail {
+  width: 120px;
+  height: 120px;
+  border-radius: 5px;
+  object-fit: cover;
+  transition: box-shadow 0.3s ease;
+}
+
+.image-item:hover .thumbnail {
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+.thumbnail-number {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2px 0;
+}
+
+/* Home page styling */
+.home-title {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+  font-size: 2.8rem;
+  font-family: 'Ethnocentric', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+.home-image {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .open-app-button {
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
   }
   
   .image-gallery {
-    @apply absolute top-[150px] right-0 w-[calc(100%-300px)] h-[calc(100%-150px)] overflow-y-auto flex flex-wrap p-5 box-border;
-  }
-  
-  .image-row {
-    @apply w-full flex flex-wrap mb-5;
-  }
-  
-  .image-item {
-    @apply relative mr-5 mb-5;
+    width: 100%;
+    left: 0;
+    padding: 10px;
   }
   
   .thumbnail {
-    @apply w-[120px] h-[120px] rounded object-cover;
+    width: 80px;
+    height: 80px;
   }
   
-  .thumbnail-number {
-    @apply absolute bottom-[5px] left-0 w-full text-center text-white text-xs font-bold bg-black bg-opacity-50 py-0.5;
+  .home-title {
+    font-size: 2rem;
   }
   
-  .migration-content {
-    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm text-center w-[35%] overflow-y-auto font-sans;
+  .home-image {
+    width: 300px;
   }
-  
-  .connect-button {
-    @apply py-2.5 px-5 bg-transparent text-white border-2 border-white rounded-full uppercase cursor-pointer transition-all duration-300 font-ethnocentric;
-  }
-  
-  .connect-button:hover {
-    @apply bg-white text-black;
-  }
-}
 
-@media (max-width: 768px) {
-  .center-text h1 {
-    @apply text-3xl;
-  }
-  
-  .migration-content {
-    @apply w-[90%] top-[150px] transform -translate-x-1/2 translate-y-0;
-  }
-  
-  .connect-button {
-    @apply hidden;
-  }
-  
-  .thumbnail {
-    @apply w-[80px] h-[80px];
+  .connect-wallet-button {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
   }
 }
 
 @media (max-width: 576px) {
+  .open-app-button {
+    font-size: 1rem;
+    padding: 0.8rem 1.6rem;
+  }
+  
   .image-gallery {
-    @apply w-full justify-center p-2.5;
+    justify-content: center;
+    padding: 10px;
   }
   
   .thumbnail {
-    @apply w-[70px] h-[70px] mr-2.5 mb-2.5;
+    width: 70px;
+    height: 70px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .navbar-links {
+    justify-content: space-around;
+  }
+  
+  .navbar-link {
+    margin: 0 5px;
+    font-size: 0.75rem;
   }
 }

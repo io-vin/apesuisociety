@@ -1,3 +1,4 @@
+// components/ApeGallery.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,6 +8,8 @@ import { SearchInput } from './SearchInput';
 export const ApeGallery = () => {
   const [images, setImages] = useState<number[]>([]);
   const [imagesPerRow, setImagesPerRow] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredImages, setFilteredImages] = useState<number[]>([]);
 
   useEffect(() => {
     function calculateNumberOfImages() {
@@ -25,6 +28,7 @@ export const ApeGallery = () => {
       // Generate 100 images for demo (would be 10000 in production)
       const imageIndexes = Array.from({ length: 100 }, (_, i) => i + 1);
       setImages(imageIndexes);
+      setFilteredImages(imageIndexes); // Initially all images are shown
     }
 
     generateImages();
@@ -37,10 +41,27 @@ export const ApeGallery = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Filter images based on search input
+  useEffect(() => {
+    if (!searchValue) {
+      setFilteredImages(images);
+      return;
+    }
+
+    const filtered = images.filter(imageIndex => 
+      imageIndex.toString().includes(searchValue)
+    );
+    setFilteredImages(filtered);
+  }, [searchValue, images]);
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value);
+  };
+
   const createRows = () => {
     const rows = [];
-    for (let i = 0; i < images.length; i += imagesPerRow) {
-      const rowImages = images.slice(i, i + imagesPerRow);
+    for (let i = 0; i < filteredImages.length; i += imagesPerRow) {
+      const rowImages = filteredImages.slice(i, i + imagesPerRow);
       rows.push(rowImages);
     }
     return rows;
@@ -49,7 +70,7 @@ export const ApeGallery = () => {
   return (
     <>
       <div className="flex flex-col mt-[80px] ml-5">
-        <SearchInput />
+        <SearchInput value={searchValue} onChange={handleSearch} />
         
         <FilterButton title="Background" />
         <FilterButton title="Fur" />
@@ -61,20 +82,26 @@ export const ApeGallery = () => {
       </div>
 
       <div className="image-gallery">
-        {createRows().map((row, rowIndex) => (
-          <div key={`row-${rowIndex}`} className="image-row">
-            {row.map((imageIndex) => (
-              <div key={`image-${imageIndex}`} className="image-item">
-                <img 
-                  src={`https://shdw-drive.genesysgo.net/tmPsyPrSsdFpcGx9etB2dJwYEKesPChmyfefis3G3dp/${imageIndex}.png`} 
-                  alt={`Ape ${imageIndex}`} 
-                  className="thumbnail" 
-                />
-                <p className="thumbnail-number">{imageIndex}</p>
-              </div>
-            ))}
+        {filteredImages.length > 0 ? (
+          createRows().map((row, rowIndex) => (
+            <div key={`row-${rowIndex}`} className="image-row">
+              {row.map((imageIndex) => (
+                <div key={`image-${imageIndex}`} className="image-item">
+                  <img 
+                    src={`https://shdw-drive.genesysgo.net/tmPsyPrSsdFpcGx9etB2dJwYEKesPChmyfefis3G3dp/${imageIndex}.png`} 
+                    alt={`Ape ${imageIndex}`} 
+                    className="thumbnail" 
+                  />
+                  <p className="thumbnail-number">{imageIndex}</p>
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <div className="w-full text-center mt-10 font-ethnocentric">
+            No apes found matching #{searchValue}
           </div>
-        ))}
+        )}
       </div>
     </>
   );
