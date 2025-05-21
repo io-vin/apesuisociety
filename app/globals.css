@@ -1,26 +1,113 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/ethnocentric.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body, html {
+  height: 100%;
+}
+
+@layer components {
+  .active-nav-link {
+    @apply relative;
+  }
+  
+  .active-nav-link::after {
+    content: '';
+    @apply absolute bottom-[-5px] left-[15%] w-[70%] h-[2px] bg-white;
+  }
+  
+  .filter-button {
+    @apply mt-2.5 ml-5 bg-transparent border-none text-white text-sm cursor-pointer relative flex justify-between items-center pl-5 pt-2 z-10 w-[200px] font-ethnocentric;
+  }
+  
+  .filter-button::before {
+    content: "";
+    @apply block absolute top-0.5 left-0 w-[200px] h-0.5 bg-white bg-opacity-40;
+  }
+  
+  .search-input {
+    @apply font-ethnocentric pt-2 pl-5 flex items-center relative max-w-full;
+  }
+  
+  .search-input input {
+    @apply text-xs py-1.5 px-2.5 w-[200px] pl-8 outline-none bg-ape-search text-white border-0 rounded-full transition-all duration-300;
+  }
+  
+  .search-input svg {
+    @apply absolute left-[30px] fill-white w-[13px] h-[13px];
+  }
+  
+  .image-gallery {
+    @apply absolute top-[150px] right-0 w-[calc(100%-300px)] h-[calc(100%-150px)] overflow-y-auto flex flex-wrap p-5 box-border;
+  }
+  
+  .image-row {
+    @apply w-full flex flex-wrap mb-5;
+  }
+  
+  .image-item {
+    @apply relative mr-5 mb-5;
+  }
+  
+  .thumbnail {
+    @apply w-[120px] h-[120px] rounded object-cover;
+  }
+  
+  .thumbnail-number {
+    @apply absolute bottom-[5px] left-0 w-full text-center text-white text-xs font-bold bg-black bg-opacity-50 py-0.5;
+  }
+  
+  .migration-content {
+    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm text-center w-[35%] overflow-y-auto font-sans;
+  }
+  
+  .connect-button {
+    @apply py-2.5 px-5 bg-transparent text-white border-2 border-white rounded-full uppercase cursor-pointer transition-all duration-300 font-ethnocentric;
+  }
+  
+  .connect-button:hover {
+    @apply bg-white text-black;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 768px) {
+  .center-text h1 {
+    @apply text-3xl;
+  }
+  
+  .migration-content {
+    @apply w-[90%] top-[150px] transform -translate-x-1/2 translate-y-0;
+  }
+  
+  .connect-button {
+    @apply hidden;
+  }
+  
+  .thumbnail {
+    @apply w-[80px] h-[80px];
+  }
+}
+
+@media (max-width: 576px) {
+  .image-gallery {
+    @apply w-full justify-center p-2.5;
+  }
+  
+  .thumbnail {
+    @apply w-[70px] h-[70px] mr-2.5 mb-2.5;
+  }
 }
