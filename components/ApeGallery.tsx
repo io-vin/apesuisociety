@@ -5,62 +5,67 @@ import { SearchInput } from './SearchInput';
 import { FilterButton } from './FilterButton';
 
 type ApeMap = Record<string, string>;
-const IMAGE_HEIGHT = 180; // altezza media thumbnail + testo
-const BUFFER_ROWS = 3;
+const IMAGE_HEIGHT = 200; // thumbnail + nome + padding
+const BUFFER = 6; // buffer immagini extra visibili
 
 export const ApeGallery = () => {
   const [apeMap, setApeMap] = useState<ApeMap>({});
   const [searchValue, setSearchValue] = useState('');
   const [filteredIds, setFilteredIds] = useState<string[]>([]);
-  const [visibleStart, setVisibleStart] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Carica JSON da /public/apes.json
+  // Fetch apeMap
   useEffect(() => {
     const load = async () => {
       const res = await fetch('/apes.json');
-      const data = await res.json();
-      setApeMap(data);
-      setFilteredIds(Object.keys(data).sort((a, b) => Number(a) - Number(b)));
+      const json = await res.json();
+      const sorted = Object.keys(json).sort((a, b) => Number(a) - Number(b));
+      setApeMap(json);
+      setFilteredIds(sorted);
     };
     load();
   }, []);
 
-  // Filtra per ID (ricerca)
+  // Update height on mount & resize
+  useEffect(() => {
+    const update = () => {
+      setViewportHeight(window.innerHeight - 180); // spazio tolto a navbar e filtri
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  // Update scroll
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      setScrollTop(container.scrollTop);
+    };
+    container.addEventListener('scroll', onScroll);
+    return () => container.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Search
   useEffect(() => {
     if (!searchValue) {
       setFilteredIds(Object.keys(apeMap).sort((a, b) => Number(a) - Number(b)));
     } else {
-      const filtered = Object.keys(apeMap).filter((id) =>
-        id.includes(searchValue)
-      );
-      setFilteredIds(filtered.sort((a, b) => Number(a) - Number(b)));
+      const result = Object.keys(apeMap)
+        .filter((id) => id.includes(searchValue))
+        .sort((a, b) => Number(a) - Number(b));
+      setFilteredIds(result);
     }
   }, [searchValue, apeMap]);
 
-  // Rileva scroll per capire quante righe devono essere mostrate
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+  const handleSearch = (value: string) => setSearchValue(value);
 
-    const onScroll = () => {
-      const scrollTop = el.scrollTop;
-      const startRow = Math.floor(scrollTop / IMAGE_HEIGHT);
-      setVisibleStart(startRow);
-    };
-
-    el.addEventListener('scroll', onScroll);
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const handleSearch = (v: string) => setSearchValue(v);
-
-  // Calcola numero righe visibili
-  const totalVisible = Math.ceil(typeof window !== 'undefined' ? window.innerHeight / IMAGE_HEIGHT : 6);
-  const start = Math.max(0, visibleStart - BUFFER_ROWS);
-  const end = Math.min(filteredIds.length, visibleStart + totalVisible + BUFFER_ROWS);
-
-  const visibleIds = filteredIds.slice(start, end);
+  const itemsPerPage = Math.ceil(viewportHeight / IMAGE_HEIGHT) + BUFFER;
+  const startIndex = Math.max(0, Math.floor(scrollTop / IMAGE_HEIGHT) - BUFFER);
+  const visibleIds = filteredIds.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <>
@@ -79,28 +84,39 @@ export const ApeGallery = () => {
 
       <div
         ref={containerRef}
-        className="mt-10 h-[calc(100vh-160px)] overflow-y-auto px-4"
+        className="mt-6 h-[calc(100vh-180px)] overflow-y-auto px-4"
       >
         <div
-          className="grid gap-4"
-          style={{ gridTemplateColumns: `repeat(auto-fit, minmax(120px, 1fr))` }}
+          style={{ height: filteredIds.length * IMAGE_HEIGHT }}
+          className="relative"
         >
-          {visibleIds.map((id) => (
-            <div key={id} className="flex flex-col items-center">
-              <img
-                src={apeMap[id]}
-                alt={`Ape ${id}`}
-                loading="lazy"
-                className="rounded-xl w-full object-cover border border-gray-600 hover:scale-105 transition"
-              />
-              <p className="text-sm text-gray-300 mt-2">#{id}</p>
-            </div>
-          ))}
+          {visibleIds.map((id) => {
+            const index = filteredIds.indexOf(id);
+            const top = index * IMAGE_HEIGHT;
+
+            return (
+              <div
+                key={id}
+                className="absolute w-[120px] sm:w-[150px]"
+                style={{ top, left: 0 }}
+              >
+                <img
+                  src={apeMap[id]}
+                  alt={`Ape ${id}`}
+                  loading="lazy"
+                  className="rounded-xl w-full object-cover border border-gray-600 hover:scale-105 transition"
+                />
+                <p className="text-sm text-gray-300 mt-2 text-center">#{id}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {visibleIds.length === 0 && (
-        <div className="text-center mt-10 font-ethnocentric">No apes found.</div>
+        <div className="text-center mt-10 font-ethnocentric">
+          No apes found matching #{searchValue}
+        </div>
       )}
     </>
   );
