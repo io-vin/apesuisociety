@@ -4,32 +4,29 @@ import { useState, useEffect } from 'react';
 import { FilterButton } from './FilterButton';
 import { SearchInput } from './SearchInput';
 
-type ApeMap = Record<string, string>; // id → url
+type ApeMap = Record<string, string>;
+
+const PAGE_SIZE = 100;
 
 export const ApeGallery = () => {
   const [apeMap, setApeMap] = useState<ApeMap>({});
   const [searchValue, setSearchValue] = useState('');
   const [filteredIds, setFilteredIds] = useState<string[]>([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
 
-  // 1. Carica il JSON da /public/apes.json
   useEffect(() => {
     async function loadApeData() {
-      try {
-        const res = await fetch('/apes.json');
-        const json = await res.json();
-        setApeMap(json);
-        setFilteredIds(Object.keys(json));
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to load apes.json:', err);
-      }
+      const res = await fetch('/apes.json');
+      const json = await res.json();
+      setApeMap(json);
+      setFilteredIds(Object.keys(json));
+      setLoading(false);
     }
 
     loadApeData();
   }, []);
 
-  // 2. Filtra in base alla ricerca
   useEffect(() => {
     if (!searchValue) {
       setFilteredIds(Object.keys(apeMap));
@@ -38,12 +35,17 @@ export const ApeGallery = () => {
         id.includes(searchValue)
       );
       setFilteredIds(filtered);
+      setVisibleCount(PAGE_SIZE); // reset when searching
     }
   }, [searchValue, apeMap]);
 
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
+  const handleSearch = (value: string) => setSearchValue(value);
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + PAGE_SIZE);
   };
+
+  const visibleIds = filteredIds.slice(0, visibleCount);
 
   if (loading) {
     return (
@@ -70,7 +72,7 @@ export const ApeGallery = () => {
 
       <div className="grid gap-4 px-4 mt-10"
            style={{ gridTemplateColumns: `repeat(auto-fit, minmax(120px, 1fr))` }}>
-        {filteredIds.map((id) => (
+        {visibleIds.map((id) => (
           <div key={id} className="flex flex-col items-center">
             <img
               src={apeMap[id]}
@@ -83,7 +85,18 @@ export const ApeGallery = () => {
         ))}
       </div>
 
-      {filteredIds.length === 0 && (
+      {visibleCount < filteredIds.length && (
+        <div className="flex justify-center mt-10">
+          <button
+            onClick={handleLoadMore}
+            className="px-6 py-2 bg-white text-black font-semibold rounded-xl hover:opacity-80 transition"
+          >
+            Load More
+          </button>
+        </div>
+      )}
+
+      {visibleIds.length === 0 && (
         <div className="w-full text-center mt-10 font-ethnocentric">
           No apes found matching #{searchValue}
         </div>
