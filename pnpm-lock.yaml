@@ -13,16 +13,22 @@ importers:
         version: 0.7.4
       '@mysten/dapp-kit':
         specifier: ^0.5.0
-        version: 0.5.0(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react-dom@18.3.7(@types/react@18.3.22))(@types/react@18.3.22)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.5.0(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react-dom@18.3.7(@types/react@18.3.22))(@types/react@18.3.22)(bufferutil@4.0.9)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.5)
       '@mysten/sui.js':
         specifier: ^0.37.1
-        version: 0.37.1
+        version: 0.37.1(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@mysten/wallet-standard':
         specifier: ^0.7.1
-        version: 0.7.2
+        version: 0.7.2(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@tanstack/react-query':
         specifier: ^4.29.19
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      bufferutil:
+        specifier: ^4.0.9
+        version: 4.0.9
+      encoding:
+        specifier: ^0.1.13
+        version: 0.1.13
       framer-motion:
         specifier: ^12.12.1
         version: 12.12.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -35,6 +41,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      utf-8-validate:
+        specifier: ^6.0.5
+        version: 6.0.5
     devDependencies:
       '@types/node':
         specifier: ^20
@@ -647,6 +656,10 @@ packages:
   bs58@5.0.0:
     resolution: {integrity: sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==}
 
+  bufferutil@4.0.9:
+    resolution: {integrity: sha512-WDtdLmJvAuNNPzByAYpRo2rF1Mmradw6gvWsQKf63476DDXmomT9zUiGypLcG4ibIM67vhAj8jJRdbmEws2Aqw==}
+    engines: {node: '>=6.14.2'}
+
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
@@ -732,6 +745,9 @@ packages:
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
 
+  encoding@0.1.13:
+    resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
+
   escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
     engines: {node: '>=6'}
@@ -805,6 +821,10 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  iconv-lite@0.6.3:
+    resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
+    engines: {node: '>=0.10.0'}
 
   is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
@@ -924,6 +944,10 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
 
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
@@ -1079,6 +1103,9 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  safer-buffer@2.1.2:
+    resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
@@ -1214,6 +1241,10 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  utf-8-validate@6.0.5:
+    resolution: {integrity: sha512-EYZR+OpIXp9Y1eG1iueg8KRsY8TuT8VNgnanZ0uA3STqhHQTLwbl+WX76/9X5OY12yQubymBpaBSmMPkSTQcKA==}
+    engines: {node: '>=6.14.2'}
+
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -1338,10 +1369,10 @@ snapshots:
     dependencies:
       bs58: 5.0.0
 
-  '@mysten/dapp-kit@0.5.0(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react-dom@18.3.7(@types/react@18.3.22))(@types/react@18.3.22)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@mysten/dapp-kit@0.5.0(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react-dom@18.3.7(@types/react@18.3.22))(@types/react@18.3.22)(bufferutil@4.0.9)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.5)':
     dependencies:
-      '@mysten/sui.js': 0.44.0
-      '@mysten/wallet-standard': 0.8.5
+      '@mysten/sui.js': 0.44.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
+      '@mysten/wallet-standard': 0.8.5(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@radix-ui/react-dialog': 1.1.14(@types/react-dom@18.3.7(@types/react@18.3.22))(@types/react@18.3.22)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu': 2.1.15(@types/react-dom@18.3.7(@types/react@18.3.22))(@types/react@18.3.22)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-slot': 1.2.3(@types/react@18.3.22)(react@18.3.1)
@@ -1362,12 +1393,12 @@ snapshots:
       - react-dom
       - utf-8-validate
 
-  '@mysten/sui.js@0.37.1':
+  '@mysten/sui.js@0.37.1(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)':
     dependencies:
       '@mysten/bcs': 0.7.3
       '@noble/curves': 1.9.1
       '@noble/hashes': 1.8.0
-      '@open-rpc/client-js': 1.8.1
+      '@open-rpc/client-js': 1.8.1(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       '@suchipi/femver': 1.0.0
@@ -1379,12 +1410,12 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@mysten/sui.js@0.41.2':
+  '@mysten/sui.js@0.41.2(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)':
     dependencies:
       '@mysten/bcs': 0.7.4
       '@noble/curves': 1.9.1
       '@noble/hashes': 1.8.0
-      '@open-rpc/client-js': 1.8.1
+      '@open-rpc/client-js': 1.8.1(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       '@suchipi/femver': 1.0.0
@@ -1396,12 +1427,12 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@mysten/sui.js@0.44.0':
+  '@mysten/sui.js@0.44.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)':
     dependencies:
       '@mysten/bcs': 0.8.1
       '@noble/curves': 1.9.1
       '@noble/hashes': 1.8.0
-      '@open-rpc/client-js': 1.8.1
+      '@open-rpc/client-js': 1.8.1(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       '@suchipi/femver': 1.0.0
@@ -1413,18 +1444,18 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@mysten/wallet-standard@0.7.2':
+  '@mysten/wallet-standard@0.7.2(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)':
     dependencies:
-      '@mysten/sui.js': 0.41.2
+      '@mysten/sui.js': 0.41.2(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@wallet-standard/core': 1.0.3
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - utf-8-validate
 
-  '@mysten/wallet-standard@0.8.5':
+  '@mysten/wallet-standard@0.8.5(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)':
     dependencies:
-      '@mysten/sui.js': 0.44.0
+      '@mysten/sui.js': 0.44.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)
       '@wallet-standard/core': 1.0.3
     transitivePeerDependencies:
       - bufferutil
@@ -1478,12 +1509,12 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
 
-  '@open-rpc/client-js@1.8.1':
+  '@open-rpc/client-js@1.8.1(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@6.0.5)':
     dependencies:
-      isomorphic-fetch: 3.0.0
-      isomorphic-ws: 5.0.0(ws@7.5.10)
+      isomorphic-fetch: 3.0.0(encoding@0.1.13)
+      isomorphic-ws: 5.0.0(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5))
       strict-event-emitter-types: 2.0.0
-      ws: 7.5.10
+      ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -1904,6 +1935,10 @@ snapshots:
     dependencies:
       base-x: 4.0.1
 
+  bufferutil@4.0.9:
+    dependencies:
+      node-gyp-build: 4.8.4
+
   busboy@1.6.0:
     dependencies:
       streamsearch: 1.1.0
@@ -1967,6 +2002,10 @@ snapshots:
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
+
+  encoding@0.1.13:
+    dependencies:
+      iconv-lite: 0.6.3
 
   escalade@3.2.0: {}
 
@@ -2036,6 +2075,10 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
+  iconv-lite@0.6.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
   is-binary-path@2.1.0:
     dependencies:
       binary-extensions: 2.3.0
@@ -2056,16 +2099,16 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  isomorphic-fetch@3.0.0:
+  isomorphic-fetch@3.0.0(encoding@0.1.13):
     dependencies:
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       whatwg-fetch: 3.6.20
     transitivePeerDependencies:
       - encoding
 
-  isomorphic-ws@5.0.0(ws@7.5.10):
+  isomorphic-ws@5.0.0(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)):
     dependencies:
-      ws: 7.5.10
+      ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
 
   jackspeak@3.4.3:
     dependencies:
@@ -2145,9 +2188,13 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  node-fetch@2.7.0:
+  node-fetch@2.7.0(encoding@0.1.13):
     dependencies:
       whatwg-url: 5.0.0
+    optionalDependencies:
+      encoding: 0.1.13
+
+  node-gyp-build@4.8.4: {}
 
   node-releases@2.0.19: {}
 
@@ -2279,6 +2326,8 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  safer-buffer@2.1.2: {}
 
   scheduler@0.23.2:
     dependencies:
@@ -2413,6 +2462,10 @@ snapshots:
     dependencies:
       react: 18.3.1
 
+  utf-8-validate@6.0.5:
+    dependencies:
+      node-gyp-build: 4.8.4
+
   util-deprecate@1.0.2: {}
 
   watchpack@2.4.0:
@@ -2445,7 +2498,10 @@ snapshots:
       string-width: 5.1.2
       strip-ansi: 7.1.0
 
-  ws@7.5.10: {}
+  ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5):
+    optionalDependencies:
+      bufferutil: 4.0.9
+      utf-8-validate: 6.0.5
 
   yaml@2.8.0: {}
 
