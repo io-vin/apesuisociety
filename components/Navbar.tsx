@@ -1,4 +1,3 @@
-// components/Navbar.tsx
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -11,35 +10,25 @@ export const Navbar = ({ isPlace = false }) => {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const [truncatedAddress, setTruncatedAddress] = useState<string>('');
+
+  // Chiamata all'hook qui direttamente
+  const currentAccount = useCurrentAccount();
   
-  // Utilizzo gli hook solo dopo il montaggio del componente
-  const [currentAccount, setCurrentAccount] = useState<any>(null);
-  
+  // Utilizzo l'effetto solo per il montaggio
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    // Protezione per gli hook che dipendono dal WalletProvider
-    if (isMounted) {
-      try {
-        const account = useCurrentAccount();
-        setCurrentAccount(account);
-        
-        // Truncate wallet address for display
-        if (account?.address) {
-          const address = account.address;
-          setTruncatedAddress(
-            `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
-          );
-        } else {
-          setTruncatedAddress('');
-        }
-      } catch (error) {
-        console.error("Error accessing wallet:", error);
-      }
+    if (isMounted && currentAccount?.address) {
+      const address = currentAccount.address;
+      setTruncatedAddress(
+        `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+      );
+    } else {
+      setTruncatedAddress('');
     }
-  }, [isMounted]);
+  }, [currentAccount, isMounted]);
 
   return (
     <nav className="navbar">
