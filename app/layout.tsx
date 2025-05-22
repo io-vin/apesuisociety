@@ -1,7 +1,6 @@
 // app/layout.tsx
 import { Providers } from './providers';
 import './globals.css';
-import { Navbar } from '@/components/Navbar';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -18,7 +17,6 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-black text-white">
         <Providers>
-          <Navbar />
           {children}
         </Providers>
       </body>
