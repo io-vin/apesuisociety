@@ -1,108 +1,93 @@
-// components/ApeGallery.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { FilterButton } from './FilterButton';
 import { SearchInput } from './SearchInput';
 
-export const ApeGallery = () => {
-  const [images, setImages] = useState<number[]>([]);
-  const [imagesPerRow, setImagesPerRow] = useState(0);
-  const [searchValue, setSearchValue] = useState('');
-  const [filteredImages, setFilteredImages] = useState<number[]>([]);
+type ApeMap = Record<string, string>; // id → url
 
+export const ApeGallery = () => {
+  const [apeMap, setApeMap] = useState<ApeMap>({});
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredIds, setFilteredIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 1. Carica il JSON da /public/apes.json
   useEffect(() => {
-    function calculateNumberOfImages() {
-      const windowWidth = window.innerWidth;
-      if (windowWidth < 576) {
-        return Math.floor(windowWidth / 100);
-      } else {
-        return Math.floor((windowWidth - 120) / 140);
+    async function loadApeData() {
+      try {
+        const res = await fetch('/apes.json');
+        const json = await res.json();
+        setApeMap(json);
+        setFilteredIds(Object.keys(json));
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to load apes.json:', err);
       }
     }
 
-    function generateImages() {
-      const imagesCount = calculateNumberOfImages();
-      setImagesPerRow(imagesCount);
-      
-      // Generate 100 images for demo (would be 10000 in production)
-      const imageIndexes = Array.from({ length: 100 }, (_, i) => i + 1);
-      setImages(imageIndexes);
-      setFilteredImages(imageIndexes); // Initially all images are shown
-    }
-
-    generateImages();
-    
-    const handleResize = () => {
-      generateImages();
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    loadApeData();
   }, []);
 
-  // Filter images based on search input
+  // 2. Filtra in base alla ricerca
   useEffect(() => {
     if (!searchValue) {
-      setFilteredImages(images);
-      return;
+      setFilteredIds(Object.keys(apeMap));
+    } else {
+      const filtered = Object.keys(apeMap).filter((id) =>
+        id.includes(searchValue)
+      );
+      setFilteredIds(filtered);
     }
-
-    const filtered = images.filter(imageIndex => 
-      imageIndex.toString().includes(searchValue)
-    );
-    setFilteredImages(filtered);
-  }, [searchValue, images]);
+  }, [searchValue, apeMap]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
 
-  const createRows = () => {
-    const rows = [];
-    for (let i = 0; i < filteredImages.length; i += imagesPerRow) {
-      const rowImages = filteredImages.slice(i, i + imagesPerRow);
-      rows.push(rowImages);
-    }
-    return rows;
-  };
+  if (loading) {
+    return (
+      <div className="text-center text-gray-400 mt-20 font-ethnocentric text-xl">
+        Loading Apes...
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="flex flex-col mt-[80px] ml-5">
         <SearchInput value={searchValue} onChange={handleSearch} />
-        
-        <FilterButton title="Background" />
-        <FilterButton title="Fur" />
-        <FilterButton title="Clothes" />
-        <FilterButton title="Eyes" />
-        <FilterButton title="Mouth" />
-        <FilterButton title="Hat" />
-        <FilterButton title="Earring" />
+        <div className="flex flex-wrap gap-2 mt-2">
+          <FilterButton title="Background" />
+          <FilterButton title="Fur" />
+          <FilterButton title="Clothes" />
+          <FilterButton title="Eyes" />
+          <FilterButton title="Mouth" />
+          <FilterButton title="Hat" />
+          <FilterButton title="Earring" />
+        </div>
       </div>
 
-      <div className="image-gallery">
-        {filteredImages.length > 0 ? (
-          createRows().map((row, rowIndex) => (
-            <div key={`row-${rowIndex}`} className="image-row">
-              {row.map((imageIndex) => (
-                <div key={`image-${imageIndex}`} className="image-item">
-                  <img 
-                    src={`https://shdw-drive.genesysgo.net/tmPsyPrSsdFpcGx9etB2dJwYEKesPChmyfefis3G3dp/${imageIndex}.png`} 
-                    alt={`Ape ${imageIndex}`} 
-                    className="thumbnail" 
-                  />
-                  <p className="thumbnail-number">{imageIndex}</p>
-                </div>
-              ))}
-            </div>
-          ))
-        ) : (
-          <div className="w-full text-center mt-10 font-ethnocentric">
-            No apes found matching #{searchValue}
+      <div className="grid gap-4 px-4 mt-10"
+           style={{ gridTemplateColumns: `repeat(auto-fit, minmax(120px, 1fr))` }}>
+        {filteredIds.map((id) => (
+          <div key={id} className="flex flex-col items-center">
+            <img
+              src={apeMap[id]}
+              alt={`Ape ${id}`}
+              loading="lazy"
+              className="rounded-xl w-full object-cover border border-gray-600 hover:scale-105 transition"
+            />
+            <p className="text-sm text-gray-300 mt-2">#{id}</p>
           </div>
-        )}
+        ))}
       </div>
+
+      {filteredIds.length === 0 && (
+        <div className="w-full text-center mt-10 font-ethnocentric">
+          No apes found matching #{searchValue}
+        </div>
+      )}
     </>
   );
 };
