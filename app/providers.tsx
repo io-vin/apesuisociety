@@ -1,27 +1,30 @@
 // app/providers.tsx
 'use client';
-
 import React, { ReactNode, useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '@mysten/dapp-kit/dist/index.css';
+import { SuiClientProvider } from '@mysten/dapp-kit';
 import { WalletProvider } from '@mysten/dapp-kit';
-// Fix the import to match the older version structure
-import { JsonRpcProvider } from '@mysten/sui.js';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface ProvidersProps {
   children: ReactNode;
 }
 
-// Create a client for connecting to the Sui network
-const provider = new JsonRpcProvider('https://fullnode.mainnet.sui.io:443');
-
-// Create a query client for React Query
+// Crea un client per React Query
 const queryClient = new QueryClient();
+
+// Configura le reti disponibili direttamente con gli URL
+const networks = {
+  devnet: { url: 'https://fullnode.devnet.sui.io:443' },
+  testnet: { url: 'https://fullnode.testnet.sui.io:443' },
+  mainnet: { url: 'https://fullnode.mainnet.sui.io:443' },
+};
 
 export function Providers({ children }: ProvidersProps) {
   const [mounted, setMounted] = useState(false);
-
-  // Wait until component is mounted to render wallet components
-  // This prevents hydration errors
+  
+  // Attendi che il componente sia montato per renderizzare i componenti wallet
+  // Questo previene gli errori di idratazione
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -32,9 +35,11 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WalletProvider>
-        {children}
-      </WalletProvider>
+      <SuiClientProvider networks={networks} defaultNetwork="mainnet">
+        <WalletProvider>
+          {children}
+        </WalletProvider>
+      </SuiClientProvider>
     </QueryClientProvider>
   );
 }

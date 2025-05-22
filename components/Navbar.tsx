@@ -1,57 +1,45 @@
 // components/Navbar.tsx
 'use client';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { useWallet } from '@mysten/dapp-kit';
+import { useAccounts, useCurrentAccount } from '@mysten/dapp-kit';
 import { useEffect, useState } from 'react';
+import { ConnectButton } from '@mysten/dapp-kit';
 
-export const Navbar = () => {
+export const Navbar = ({ isPlace = false }) => {
   const pathname = usePathname();
-  const { 
-    wallets, 
-    currentWallet, 
-    selectWallet, // This was 'select' in newer versions
-    connected, 
-    connecting, 
-    connect, 
-    disconnect 
-  } = useWallet();
-  
+  const [isMounted, setIsMounted] = useState(false);
   const [truncatedAddress, setTruncatedAddress] = useState<string>('');
+  
+  // Utilizzo gli hook solo dopo il montaggio del componente
+  const [currentAccount, setCurrentAccount] = useState<any>(null);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
-    // Set selected wallet name when current wallet changes
-    if (currentWallet) {
-      // Truncate wallet address for display
-      if (currentWallet.accounts && currentWallet.accounts.length > 0) {
-        const address = currentWallet.accounts[0].address;
-        setTruncatedAddress(
-          `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
-        );
-      }
-    } else {
-      setTruncatedAddress('');
-    }
-  }, [currentWallet]);
-
-  const handleConnect = async () => {
-    try {
-      if (connected) {
-        await disconnect();
-      } else if (wallets.length > 0) {
-        // Select first available wallet if not already selected
-        const walletToUse = currentWallet || wallets[0];
-        if (!currentWallet) {
-          await selectWallet(walletToUse.name);
+    // Protezione per gli hook che dipendono dal WalletProvider
+    if (isMounted) {
+      try {
+        const account = useCurrentAccount();
+        setCurrentAccount(account);
+        
+        // Truncate wallet address for display
+        if (account?.address) {
+          const address = account.address;
+          setTruncatedAddress(
+            `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+          );
+        } else {
+          setTruncatedAddress('');
         }
-        await connect();
+      } catch (error) {
+        console.error("Error accessing wallet:", error);
       }
-    } catch (e) {
-      console.error("Wallet connection error:", e);
     }
-  };
+  }, [isMounted]);
 
   return (
     <nav className="navbar">
@@ -62,45 +50,33 @@ export const Navbar = () => {
           </div>
         </Link>
       </div>
-      
       <div className="navbar-links">
-        <Link 
-          href="/apes" 
+        <Link
+          href="/apes"
           className={pathname === '/apes' ? 'navbar-link active' : 'navbar-link'}
         >
           Apes
         </Link>
-        <Link 
-          href="/migrate" 
+        <Link
+          href="/migrate"
           className={pathname === '/migrate' ? 'navbar-link active' : 'navbar-link'}
         >
           Migrate
         </Link>
-        <Link 
-          href="#" 
+        <Link
+          href="#"
           className="navbar-link"
         >
           More
         </Link>
       </div>
-      
       <div className="navbar-actions">
-        {pathname === '/migrate' && (
-          <button 
-            onClick={handleConnect} 
-            className="connect-wallet-button"
-            disabled={connecting}
-          >
-            {connecting ? (
-              "Connecting..."
-            ) : connected ? (
-              truncatedAddress || 'Connected'
-            ) : (
-              'Connect Wallet'
-            )}
-          </button>
+        {pathname === '/migrate' && isMounted && (
+          <ConnectButton />
         )}
       </div>
     </nav>
   );
 };
+
+export default Navbar;
