@@ -1,5 +1,7 @@
 // app/app/page.tsx
 'use client';
+export const dynamic = 'force-dynamic';
+
 import { useAccounts, useCurrentAccount } from '@mysten/dapp-kit';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -9,19 +11,15 @@ export default function AppPage() {
   const currentAccount = useCurrentAccount();
   const router = useRouter();
   
-  // Verifica se il wallet è connesso
   const isConnected = !!currentAccount;
 
   useEffect(() => {
     if (!isConnected) {
-      // Redirect back to migrate if not connected
       router.push('/migrate');
     }
   }, [isConnected, router]);
 
-  if (!isConnected) {
-    return null; // Will redirect in the useEffect
-  }
+  if (!isConnected) return null;
 
   return (
     <main className="pt-24 px-6">
