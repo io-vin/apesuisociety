@@ -1,123 +1,102 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { SearchInput } from './SearchInput';
+import { useState, useEffect } from 'react';
 import { FilterButton } from './FilterButton';
+import { SearchInput } from './SearchInput';
 
 type ApeMap = Record<string, string>;
-const IMAGE_HEIGHT = 200; // thumbnail + nome + padding
-const BUFFER = 6; // buffer immagini extra visibili
+
+const getOptimizedURL = (url: string) =>
+  `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=200&output=webp`;
 
 export const ApeGallery = () => {
   const [apeMap, setApeMap] = useState<ApeMap>({});
+  const [imagesPerRow, setImagesPerRow] = useState(0);
   const [searchValue, setSearchValue] = useState('');
-  const [filteredIds, setFilteredIds] = useState<string[]>([]);
-  const [viewportHeight, setViewportHeight] = useState(0);
-  const [scrollTop, setScrollTop] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [filteredImages, setFilteredImages] = useState<string[]>([]);
 
-  // Fetch apeMap
+  // 1. Calcola immagini per riga
   useEffect(() => {
-    const load = async () => {
+    const calculate = () => {
+      const width = window.innerWidth;
+      setImagesPerRow(width < 576 ? Math.floor(width / 100) : Math.floor((width - 120) / 140));
+    };
+
+    calculate();
+    window.addEventListener('resize', calculate);
+    return () => window.removeEventListener('resize', calculate);
+  }, []);
+
+  // 2. Carica JSON con gli URL
+  useEffect(() => {
+    const fetchImages = async () => {
       const res = await fetch('/apes.json');
       const json = await res.json();
-      const sorted = Object.keys(json).sort((a, b) => Number(a) - Number(b));
       setApeMap(json);
-      setFilteredIds(sorted);
+
+      const sortedKeys = Object.keys(json).sort((a, b) => Number(a) - Number(b));
+      setFilteredImages(sortedKeys);
     };
-    load();
+
+    fetchImages();
   }, []);
 
-  // Update height on mount & resize
+  // 3. Filtra per ricerca
   useEffect(() => {
-    const update = () => {
-      setViewportHeight(window.innerHeight - 180); // spazio tolto a navbar e filtri
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-
-  // Update scroll
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const onScroll = () => {
-      setScrollTop(container.scrollTop);
-    };
-    container.addEventListener('scroll', onScroll);
-    return () => container.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Search
-  useEffect(() => {
-    if (!searchValue) {
-      setFilteredIds(Object.keys(apeMap).sort((a, b) => Number(a) - Number(b)));
-    } else {
-      const result = Object.keys(apeMap)
-        .filter((id) => id.includes(searchValue))
-        .sort((a, b) => Number(a) - Number(b));
-      setFilteredIds(result);
-    }
+    const ids = Object.keys(apeMap);
+    const filtered = searchValue
+      ? ids.filter((id) => id.includes(searchValue))
+      : ids;
+    setFilteredImages(filtered.sort((a, b) => Number(a) - Number(b)));
   }, [searchValue, apeMap]);
 
-  const handleSearch = (value: string) => setSearchValue(value);
+  const handleSearch = (val: string) => setSearchValue(val);
 
-  const itemsPerPage = Math.ceil(viewportHeight / IMAGE_HEIGHT) + BUFFER;
-  const startIndex = Math.max(0, Math.floor(scrollTop / IMAGE_HEIGHT) - BUFFER);
-  const visibleIds = filteredIds.slice(startIndex, startIndex + itemsPerPage);
+  const createRows = () => {
+    const rows = [];
+    for (let i = 0; i < filteredImages.length; i += imagesPerRow) {
+      rows.push(filteredImages.slice(i, i + imagesPerRow));
+    }
+    return rows;
+  };
 
   return (
     <>
       <div className="flex flex-col mt-[80px] ml-5">
         <SearchInput value={searchValue} onChange={handleSearch} />
-        <div className="flex flex-wrap gap-2 mt-2">
-          <FilterButton title="Background" />
-          <FilterButton title="Fur" />
-          <FilterButton title="Clothes" />
-          <FilterButton title="Eyes" />
-          <FilterButton title="Mouth" />
-          <FilterButton title="Hat" />
-          <FilterButton title="Earring" />
-        </div>
+
+        <FilterButton title="Background" />
+        <FilterButton title="Fur" />
+        <FilterButton title="Clothes" />
+        <FilterButton title="Eyes" />
+        <FilterButton title="Mouth" />
+        <FilterButton title="Hat" />
+        <FilterButton title="Earring" />
       </div>
 
-      <div
-        ref={containerRef}
-        className="mt-6 h-[calc(100vh-180px)] overflow-y-auto px-4"
-      >
-        <div
-          style={{ height: filteredIds.length * IMAGE_HEIGHT }}
-          className="relative"
-        >
-          {visibleIds.map((id) => {
-            const index = filteredIds.indexOf(id);
-            const top = index * IMAGE_HEIGHT;
-
-            return (
-              <div
-                key={id}
-                className="absolute w-[120px] sm:w-[150px]"
-                style={{ top, left: 0 }}
-              >
-                <img
-                  src={apeMap[id]}
-                  alt={`Ape ${id}`}
-                  loading="lazy"
-                  className="rounded-xl w-full object-cover border border-gray-600 hover:scale-105 transition"
-                />
-                <p className="text-sm text-gray-300 mt-2 text-center">#{id}</p>
-              </div>
-            );
-          })}
-        </div>
+      <div className="image-gallery">
+        {filteredImages.length > 0 ? (
+          createRows().map((row, rowIndex) => (
+            <div key={`row-${rowIndex}`} className="image-row">
+              {row.map((id) => (
+                <div key={`image-${id}`} className="image-item">
+                  <img
+                    src={getOptimizedURL(apeMap[id])}
+                    alt={`Ape ${id}`}
+                    className="thumbnail"
+                    loading="lazy"
+                  />
+                  <p className="thumbnail-number">#{id}</p>
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <div className="w-full text-center mt-10 font-ethnocentric">
+            No apes found matching #{searchValue}
+          </div>
+        )}
       </div>
-
-      {visibleIds.length === 0 && (
-        <div className="text-center mt-10 font-ethnocentric">
-          No apes found matching #{searchValue}
-        </div>
-      )}
     </>
   );
 };
