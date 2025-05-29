@@ -6,9 +6,6 @@ import { SearchInput } from './SearchInput';
 
 type ApeMap = Record<string, string>;
 
-const getOptimizedURL = (url: string) =>
-  `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=200&output=webp`;
-
 export const ApeGallery = () => {
   const [apeMap, setApeMap] = useState<ApeMap>({});
   const [imagesPerRow, setImagesPerRow] = useState(0);
@@ -81,7 +78,7 @@ export const ApeGallery = () => {
               {row.map((id) => (
                 <div key={`image-${id}`} className="image-item">
                   <img
-                    src={getOptimizedURL(apeMap[id])}
+                    src={apeMap[id]}
                     alt={`Ape ${id}`}
                     className="thumbnail"
                     loading="lazy"
